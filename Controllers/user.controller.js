@@ -328,7 +328,7 @@ const getSingleUser = async(req,res)=>{
        if (user?.email === email) {
       return res.status(400).json({message:"Email does not Found"})
       }
-      return res.status(201).json({message:"Successfully Get SIngle User"})
+      return res.status(201).json({message:"Successfully Get SIngle User",user})
       
     } catch (error) {
       console.log("error",error);
