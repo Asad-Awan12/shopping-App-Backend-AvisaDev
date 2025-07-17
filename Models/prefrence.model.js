@@ -4,6 +4,10 @@ const prefrenceSchema = mongoose.Schema({
    userId:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"User",
+    // required:true
+   },
+   username:{
+    type:String,
     required:true
    },
    age:{
@@ -16,7 +20,7 @@ const prefrenceSchema = mongoose.Schema({
    },
    location:{
     type:String,
-    required:true
+    // required:true
    },
    interest:{
     type:String,
@@ -24,7 +28,11 @@ const prefrenceSchema = mongoose.Schema({
    },
    education:{
     type:String,
-    required:true
+    // required:true
+   },
+   profile:{
+    type:String,
+    // required:true
    }
 },{timestamps:true})
 

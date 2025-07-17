@@ -12,7 +12,7 @@ app.use(cors())
 //     // optionSuccessStatus:200
 // }))
 app.use(express.json({limit:'16kb'}));
-// app.use(bodyParser.json());
+// app.use(ex?.json());
 
 app.use(express.urlencoded({limit:'16kb',extended:true}));
 app.use(express.static('public/temp'));

@@ -15,24 +15,28 @@ let emailRegex =
   /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 const register = async (req, res) => {
   try {
-    let { fullName, email, password, phoneNumber, otp } = req.body;
+    let { fullName, email, password, phoneNumber } = req.body;
+    let otp;   // it will be in body not like this
     console.log("otp ", typeof otp);
-
-    if (
-      [fullName, email, password, phoneNumber].some(
-        (field) => field.trim === ""
-      )
-    ) {
-      return res.status(501).json({ message: "All fields are required" });
+    if (!fullName) { 
+      return res.status(501).json({ message: "Full name is required" });
     }
+
+    // if (
+    //   [fullName, email, password].some(
+    //     (field) => field?.trim === ""
+    //   )
+    // ) {
+    //   return res.status(501).json({ message: "All fields are required" });
+    // }
     let emailValid = emailRegex.test(email);
     if (!emailValid) {
       return res.status(400).json({ error: "Email is not valid" });
     }
-    let passwordValid = passwordRegex.test(password);
-    if (!passwordValid) {
-      return res.status(400).json({ error: "password is not valid" });
-    }
+    // let passwordValid = passwordRegex.test(password);
+    // if (!passwordValid) {
+    //   return res.status(400).json({ error: "password is not valid" });
+    // }
 
     const existeduser = await User.findOne({
       $or: [{ fullName }, { email }],
@@ -55,9 +59,9 @@ const register = async (req, res) => {
     let otp_data = otpData?.otp;
     console.log("otpData ", otpData?.otp);
 
-    if (String(otp_data) !== otp) {
-      return res.status(400).json({ error: "invalid otp" });
-    }
+    // if (String(otp_data) !== otp) {
+    //   return res.status(400).json({ error: "invalid otp" });
+    // }
 
     // otp expired
     otp_Data.map((i) => {
@@ -77,9 +81,10 @@ const register = async (req, res) => {
       fullName,
       email,
       password,
-      phoneNumber,
-      profilePic,
-      otp,
+      // status
+      // phoneNumber,
+      // profilePic,
+      // otp,
     });
 
     // console.log(user);
@@ -89,14 +94,26 @@ const register = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: "user not register successfully" });
+    return res.status(401).json({ error: "user not register successfully" });
   }
 };
 
 const login = async (req, res) => {
+  
+  if (!req.body) {
+        return res.status(501).json({ message: "Please send data" });
+
+  }
   const { email, password } = req.body;
+  
   if ([email, password].some((field) => field.trim === "")) {
     return res.status(501).json({ message: "All fields are required" });
+  }
+  if (!email) {
+    return res.staus(404).json({ message: "Email does not found!!" });
+  }
+  if (!password) {
+    return res.staus(404).json({ message: "Password does not found!!" });
   }
   const user = await User.findOne({ email });
   if (!user) {
@@ -106,11 +123,10 @@ const login = async (req, res) => {
   if (!isMatch) {
     return res.status(404).json({ message: "Please Enter Correct Password" });
   }
+  const findUser = await User.findOne({email:email}).select("-password")
   return res.status(201).json({
     message: "user login successfully",
-    user: {
-      email,
-    },
+    user: findUser
   });
 };
 
@@ -224,7 +240,6 @@ let limit_arr = [];
 const otp_generator = (req, res) => {
   const { email } = req.body;
   const otp = genrateOtp();
-  let newotp = genrateOtp();
   const now = Date.now();
   const expiresAt = now + 30 * 1000;
   let data = { email, otp, expiresAt };
@@ -305,6 +320,21 @@ const getAll = async (req, res) => {
   }
 };
 
+const getSingleUser = async(req,res)=>{
+    const {email} = req.body;
+    try {
+     
+      const user = await User.findOne({email}).select('-password')
+       if (user?.email === email) {
+      return res.status(400).json({message:"Email does not Found"})
+      }
+      return res.status(201).json({message:"Successfully Get SIngle User"})
+      
+    } catch (error) {
+      console.log("error",error);
+      return res.status(400).json({message:"Error in Get SIngle User"})
+    }
+}
 export {
   register,
   login,
@@ -313,4 +343,5 @@ export {
   updateEmail,
   otp_generator,
   getAll,
+  getSingleUser
 };

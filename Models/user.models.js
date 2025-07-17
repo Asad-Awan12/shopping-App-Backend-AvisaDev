@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema(
         unique:true,
         required:true
       },
+      status:{
+        type:String,
+        enum:["Patient","Doctor"],
+        default:"Patient"
+      },
       email:{
         type:String,
         unique:true,
@@ -18,20 +23,24 @@ const userSchema = new mongoose.Schema(
         unique:true,
         required:true
       },
-      profilePic:{
-        type:String,
-        required:true
-      },
-      phoneNumber:{
-        type:Number,
-        unique:true,
-        required:true
-      },
-      isAdmin:{
-        type:Boolean,
-        required:true,
-        default:false
-      }
+
+      // profilePic:{
+      //   type:String,
+      //   required:true
+      // },
+
+      // phoneNumber:{
+      //   type:Number,
+      //   unique:true,
+      //   required:true
+      // },
+
+      // isAdmin:{
+      //   type:Boolean,
+      //   required:true,
+      //   default:false
+      // }
+
       // otp:{
       //   type:Number,
       //   unique:true,
